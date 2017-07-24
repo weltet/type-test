@@ -1,0 +1,157 @@
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+public class Main extends JFrame{
+	
+	public int totalScore = 0;
+	public int score = 0;
+	public int time = 60;
+	public String resultMsg = "";
+	
+	
+	private JLabel testSentence = new JLabel("");
+	private JLabel timeLabel = new JLabel(time + "s");
+	private JTextField userInput = new JTextField();
+	private JLabel scoreLabel = new JLabel("score : " + totalScore);
+	private JTextArea result = new JTextArea();
+	private JScrollPane resultScroll = new JScrollPane();
+	
+	
+	private JPanel top = new JPanel();
+	private JPanel timeScore = new JPanel(new GridLayout(2,1));
+	private JPanel sentencesPan = new JPanel(new GridLayout(2,1));
+	
+	
+	private void compInit(){
+		
+		this.testSentence.setPreferredSize(new Dimension(400,30));
+		this.userInput.setPreferredSize(new Dimension(400,30));
+		this.timeScore.add(timeLabel);
+		this.timeScore.add(scoreLabel);
+		this.sentencesPan.add(userInput, FlowLayout.LEFT);
+		this.sentencesPan.add(testSentence, FlowLayout.LEFT);
+		
+		this.resultScroll.add(result);
+		
+		this.top.add(sentencesPan);
+		this.top.add(timeScore, BorderLayout.WEST);
+		
+		
+		this.add(top, BorderLayout.NORTH);
+		this.add(resultScroll, BorderLayout.SOUTH);
+		
+	}
+	
+	public Main(){
+		this.setSize(500,400);
+		this.setLocationRelativeTo(null);
+		this.setDefaultCloseOperation(Main.EXIT_ON_CLOSE);
+		this.compInit();
+		
+		this.eventInit();
+		this.displayText();
+		this.displayResult();
+		this.setVisible(true);
+	
+	Thread CountDown = new Thread(){
+		public void run() {
+			
+			for(time =60;time>0;time--) {
+				 
+					timeLabel.setText(time+"s");
+					
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace(); 
+					}
+					
+			}	
+				System.out.println("fail");
+				System.exit(0);
+		}
+	};
+	
+		CountDown.start();
+	}
+		
+	
+	
+	String[] sentences = new String[] {
+			"Education is a method whereby one acquires a higher grade of prejudices",
+			"It is a bad plan that admits of no modification",
+			"Nothing is as far away as one minute ago"
+			
+	};
+	
+	private void displayText() {
+		int random = (int)(Math.random()*3);
+		testSentence.setText(sentences[random]);
+			
+	}
+	
+	 private void displayResult()
+	    {
+	        setPreferredSize(new Dimension(200, 250));
+	        
+	        resultScroll = new JScrollPane(result);
+	        resultScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+	        add(resultScroll);
+	    }
+
+	public void eventInit() {
+		userInput.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+				
+				
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				
+				
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
+							if(userInput.getText().equals(testSentence.getText())) {
+								
+								time+=5;
+								result.setText(result.getText()+"o, +5 sedonds\n");
+								totalScore++;
+								scoreLabel.setText("score : " + totalScore);
+								userInput.setText("");
+								displayText();  
+								
+							}
+							else {
+								
+								time-=5;
+								result.setText(result.getText()+"x, -5 sedonds\n");
+								userInput.setText(""); 
+								
+							}
+				}
+			}
+		}); 
+	}
+	
+	
+	public static void main(String[] args){
+		new Main();
+	}
+}
